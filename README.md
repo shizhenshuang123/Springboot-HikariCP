@@ -2,10 +2,14 @@
 ``jdk``：JDK1.8+
 ``gradle``：Gradle4.6+
 ``Spring``：2.1.3.RELEASE+
+---
 当数据库数据达到一定数量的时候，数据库的响应将会有所缓慢，一般都会采取一些措施。例如，读写分离、分表分库、主从服务、缓存技术等等。这里采用的是多库多表。
 test库中user_info表：
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-fb881969f645c8a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+---
 test2库中user_info表：
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-4720918c68a71439.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 #####导入依赖
 ```
