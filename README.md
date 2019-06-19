@@ -4,6 +4,7 @@
 ``Spring``：2.1.3.RELEASE+
 ---
 当数据库数据达到一定数量的时候，数据库的响应将会有所缓慢，一般都会采取一些措施。例如，读写分离、分表分库、主从服务、缓存技术等等。这里采用的是多库多表。
+
 test库中user_info表：
 
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-fb881969f645c8a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -11,7 +12,10 @@ test库中user_info表：
 test2库中user_info表：
 
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-4720918c68a71439.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+---
+
 #####导入依赖
+
 ```
 // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.3.RELEASE'
@@ -27,12 +31,17 @@ test2库中user_info表：
     // https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter
     compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.0.0'
 ```
+
 HikariCP在spring-boot-starter-jdbc中已经被引入（Spring默认数据源）
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-da0d7d18daa6aa43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 #####项目结构
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-b0a24e43dd8e49ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 #####配置文件配置（application.yaml）默认数据源信息
+
 ```
 spring:
   datasource:
@@ -41,7 +50,9 @@ spring:
     password: admin
     sql-script-encoding: UTF-8
 ```
+
 #####读取配置信息DataSourceConfig.java，创建默认的数据源
+
 ```
 package utry.hikaricp.config;
 
@@ -86,7 +97,9 @@ public class DataSourceConfig {
     }
 }
 ```
+
 #####通过DataSourceProvider创建HikariDataSource
+
 ```
 package utry.hikaricp;
 
@@ -109,7 +122,9 @@ public class DataSourceProvider {
     }
 }
 ```
+
 #####最核心的数据源的类MyHikariDataSource.java
+
 ```
 package utry.hikaricp.source;
 
@@ -161,10 +176,12 @@ public class MyHikariDataSource extends AbstractDataSource {
     }
 }
 ```
+
 只要将上面这个类中的DataSourceMap集合中的HikariDataSource修改就能实现数据源的切换了，调用updateDataSourceMap()方法修改即可（修改之前，先关闭之前的数据源，这里写死的map中key=1，读者可以实现动态设置）
 
 ---
 #####实体类UserInfo.java
+
 ```
 package utry.hikaricp.model;
 
@@ -198,9 +215,11 @@ public class UserInfo {
     }
 }
 ```
+
 ######HikariCpController.java两个接口：
 1. 更新数据源
 2. 查询用户信息
+
 ```
 package utry.hikaricp.controller;
 
@@ -242,16 +261,24 @@ public class HikariCpController {
 
 }
 ```
+
 #####启动项目
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-a5c9b65083db9a47.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 1. 调用get接口，返回的数据是test库中的
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-0103c6d0e9bb187e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 2. 调用update请求更新数据源
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-bcf7469f2c701161.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 调用成功之后，可以看到，之前的数据源已经被shutdown，初始化了一个新的数据源
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-34c2b5478eea6cb4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 3. 再次调用get请求，可以看到获取的test2数据库中的数据
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15706831-3236f3d38d956cb9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
